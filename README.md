@@ -7,12 +7,13 @@ PHP Method weaving! Mix in the same method with several different signatures.
 
 Basically the DelegateClass allows you to proxy method calls to the contained
 objects within. It verifies method signature so will match up the first method
-that will work with the supplied arguments
+that will work with the supplied arguments.
 
 ## Usage (Basic)
 
 ### Example 1 (extending)
 
+    <?php
     class Model {
         public function getName(){
             return "name";
@@ -27,6 +28,7 @@ that will work with the supplied arguments
 
 ### Example 2 (multiple methods)
 
+    <?php
     class Model1 {
         public function say(){
             return "hello";
@@ -45,5 +47,63 @@ that will work with the supplied arguments
     echo $test->say();
     echo $test->say("world");
 
+## Usage (Advanced)
+
+### Example 1 (runtime binding)
+
+    <?php
+    class Model {
+        public function getName(){
+            return "name";
+        }
+    }
+    class Test extends DelegateClass {}
+
+    $model = new Model();
+    $test = new Test();
+
+    // Runtime binding
+    $test->bind($model);
+
+    echo $test->getName();
+
+    // Runtime unbinding!
+    $test->unbind($model);
+
+    echo $test->getName(); // <- results in BadMethodCallException!
 
 
+### Example 2 (method invocation by string)
+
+    <?php
+    class Model {
+        public function say($first, $second, $third = null){
+            return "hello $first, $second, $third";
+        }
+    }
+    class Test extends DelegateClass {}
+
+    // Execution
+    $test = new Test(new Model());
+
+    echo $test->send("say", 1, 2);
+    echo $test->send("say", 1, 2, 3);
+
+
+### Example 3 (responding)
+
+    <?php
+    class Model {
+        public function say($first, $second, $third = null){
+            return "hello $first, $second, $third";
+        }
+    }
+    class Test extends DelegateClass {}
+
+    // Execution
+    $test = new Test(new Model());
+
+    $methodName = "say";
+    if($test->respond_to($methodName)){  // => true
+        echo $test->send($methodName, 1, 2, 3);
+    };

@@ -81,10 +81,10 @@ class DelegateClass {
                 }
             }
         }
-        throw new BadMethodCallException("Unknown method '$method_name' on ");
+        throw new BadMethodCallException("Unknown method '$method_name()'.");
     }
 
-    public function __callStatic($name, $arguments){
+    public static function __callStatic($name, $arguments){
         throw new BadMethodCallException("Delegate class does not cater for static method invocation at present.");
     }
 
@@ -115,7 +115,7 @@ class DelegateClass {
         if($this->respond_to($method_name)){
             return call_user_func_array(array($this, $method_name), $args);
         }
-        throw new InvalidArgumentException("Unknown method '$method_name' supplied as argument");
+        throw new InvalidArgumentException("Unknown method '$method_name()' supplied as argument");
     }
 
 }
