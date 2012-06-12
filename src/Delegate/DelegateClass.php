@@ -1,5 +1,7 @@
 <?php
 
+namespace Delegate;
+
 /**
  * DelegateClass
  * @copyright James Turner 2012
@@ -60,14 +62,14 @@ class DelegateClass {
      */
     public function __call($method_name, $args){
         foreach($this->delegates as $delegate){
-            $reflection = new ReflectionObject($delegate);
+            $reflection = new \ReflectionObject($delegate);
             if($reflection->hasMethod($method_name)){
                 $reflectMethod = $reflection->getMethod($method_name);
                 // Check param matching
                 foreach($reflectMethod->getParameters() as $idx => $param){
                     if($param->getClass()){
                         $className = $param->getClass()->name;
-                        if(!$args[$idx] instanceof $className){
+                        if(array_key_exists($idx, $args) && !$args[$idx] instanceof $className){
                             continue 2; // keep trying delegates
                         }
                     }
@@ -81,11 +83,11 @@ class DelegateClass {
                 }
             }
         }
-        throw new BadMethodCallException("Unknown method '$method_name()'.");
+        throw new \BadMethodCallException("Unknown method '$method_name()'.");
     }
 
     public static function __callStatic($name, $arguments){
-        throw new BadMethodCallException("Delegate class does not cater for static method invocation at present.");
+        throw new \BadMethodCallException("Delegate class does not cater for static method invocation at present.");
     }
 
     /**
@@ -95,7 +97,7 @@ class DelegateClass {
      */
     public function respond_to($method_name){
         foreach($this->delegates as $delegate){
-            $reflection = new ReflectionObject($delegate);
+            $reflection = new \ReflectionObject($delegate);
             if($reflection->hasMethod($method_name) || (method_exists($delegate, __METHOD__) && $delegate->{__METHOD__}($method_name))){
                 return true;
             }
@@ -115,7 +117,7 @@ class DelegateClass {
         if($this->respond_to($method_name)){
             return call_user_func_array(array($this, $method_name), $args);
         }
-        throw new InvalidArgumentException("Unknown method '$method_name()' supplied as argument");
+        throw new \InvalidArgumentException("Unknown method '$method_name()' supplied as argument");
     }
 
 }
