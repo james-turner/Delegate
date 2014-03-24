@@ -12,98 +12,99 @@ that will work with the supplied arguments.
 ## Usage (Basic)
 
 ### Example 1 (extending)
-
-    <?php
-    class Model {
-        public function getName(){
-            return "name";
-        }
+```php
+<?php
+class Model {
+    public function getName(){
+        return "name";
     }
-    class Test extends DelegateClass {}
+}
+class Test extends DelegateClass {}
 
-    $test = new Test(new Model());
+$test = new Test(new Model());
 
-    echo $test->getName();
-
+echo $test->getName();
+```
 
 ### Example 2 (multiple methods)
-
-    <?php
-    class Model1 {
-        public function say(){
-            return "hello";
-        }
+```php
+<?php
+class Model1 {
+    public function say(){
+        return "hello";
     }
+}
 
-    class Model2 {
-        public function say($what){
-            return "hello " . $what;
-        }
+class Model2 {
+    public function say($what){
+        return "hello " . $what;
     }
+}
 
-    class Test extends DelegateClass {}
+class Test extends DelegateClass {}
 
-    $test = new Test(new Model1(), new Model2());
-    echo $test->say();
-    echo $test->say("world");
-
+$test = new Test(new Model1(), new Model2());
+echo $test->say();
+echo $test->say("world");
+```
 ## Usage (Advanced)
 
 ### Example 1 (runtime binding)
-
-    <?php
-    class Model {
-        public function getName(){
-            return "name";
-        }
+```php
+<?php
+class Model {
+    public function getName(){
+        return "name";
     }
-    class Test extends DelegateClass {}
+}
+class Test extends DelegateClass {}
 
-    $model = new Model();
-    $test = new Test();
+$model = new Model();
+$test = new Test();
 
-    // Runtime binding
-    $test->bind($model);
+// Runtime binding
+$test->bind($model);
 
-    echo $test->getName();
+echo $test->getName();
 
-    // Runtime unbinding!
-    $test->unbind($model);
+// Runtime unbinding!
+$test->unbind($model);
 
-    echo $test->getName(); // <- results in BadMethodCallException!
-
+echo $test->getName(); // <- results in BadMethodCallException!
+```
 
 ### Example 2 (method invocation by string)
-
-    <?php
-    class Model {
-        public function say($first, $second, $third = null){
-            return "hello $first, $second, $third";
-        }
+```php
+<?php
+class Model {
+    public function say($first, $second, $third = null){
+        return "hello $first, $second, $third";
     }
-    class Test extends DelegateClass {}
+}
+class Test extends DelegateClass {}
 
-    // Execution
-    $test = new Test(new Model());
+// Execution
+$test = new Test(new Model());
 
-    echo $test->send("say", 1, 2);
-    echo $test->send("say", 1, 2, 3);
-
+echo $test->send("say", 1, 2);
+echo $test->send("say", 1, 2, 3);
+```
 
 ### Example 3 (responding)
-
-    <?php
-    class Model {
-        public function say($first, $second, $third = null){
-            return "hello $first, $second, $third";
-        }
+```php
+<?php
+class Model {
+    public function say($first, $second, $third = null){
+        return "hello $first, $second, $third";
     }
-    class Test extends DelegateClass {}
+}
+class Test extends DelegateClass {}
 
-    // Execution
-    $test = new Test(new Model());
+// Execution
+$test = new Test(new Model());
 
-    $methodName = "say";
-    if($test->respond_to($methodName)){  // => true
-        echo $test->send($methodName, 1, 2, 3);
-    };
+$methodName = "say";
+if($test->respond_to($methodName)){  // => true
+    echo $test->send($methodName, 1, 2, 3);
+};
+```
